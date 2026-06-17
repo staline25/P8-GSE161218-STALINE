@@ -87,11 +87,11 @@ O mapa térmico, gerado sobre o subconjunto dos Top 20 genes de maior variância
 
 Os resultados do enriquecimento funcional gerados pelo g:Profiler mapearam os processos afetados nas três abordagens par a par:
 
-* Contraste FLT3i vs ctrl: Identificou 6 termos biológicos anotados com significância estrita ($\text{padj} < 0.05$, coloridos em amarelo). O termo de maior impacto estatístico pertenceu à ontologia de Componente Celular: GO:CC:0005737 — cytoplasm . No escopo de Processos Biológicos, houve forte enriquecimento no controle de rotas metabólicas pequenas: GO:BP:0007252 — purine-containing compound metabolic processe GO:BP:00055086 — nucleobase-containing small molecule metabolic process (ID 3). Termos associados à ligação proteica (GO:MF:0005515 — protein binding, ID 1) e diferenciação celular (IDs 4 e 5) completaram o perfil.
+* Contraste FLT3i vs ctrl: 
 
-* Contraste MEKi vs ctrl: Exibiu uma topologia idêntica e conservada de 6 termos focados nas mesmas assinaturas do citoplasma e metabolismo de purinas. Contudo, registrou assinaturas acessórias discretas e singulares voltadas para atividade de fatores de transcrição (TF) e complexos multiproteicos celulares (CORUM), sugerindo uma resposta transcricional sutilmente mais ramificada no braço do trametinib.
+* Contraste MEKi vs ctrl: 
 
-* Contraste MEKi vs FLT3i: A comparação direta purificada entre os tratamentos eliminou o ruído de fundo provocado pelo controle e expôs que a real divergência funcional entre os fármacos se restringe a 5 termos biológicos concentrados em processos de organização celular e sinalização de projeções citoplasmáticas (IDs 1, 2, 3, 4 e o compartimento cytoplasm como ID 5, $\text{padj} = 1.537 \times 10^{-3}$).
+* Contraste MEKi vs FLT3i: 
 
 
 
