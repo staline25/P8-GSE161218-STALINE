@@ -7,6 +7,8 @@ Aluna: Staline Sahara Dianana_15426416
 Data: 16 de Junho de 2026  
 
 
+
+
 1. Introdução
 
 O Câncer de Pulmão de Células Não Pequenas (CPCNP) é a principal causa de morte por câncer no mundo, apresentando uma taxa de sobrevida bastante baixa. Entre os subtipos moleculares mais agressivos, as mutações de ganho de função no oncogene KRAS (especialmente as variantes G12C, G12V e G12D) estão presentes em cerca de 30% dos casos de adenocarcinoma pulmonar. A proteína KRAS mutante permanece constantemente ligada ao GTP, funcionando como um interruptor molecular permanentemente ativado. Esse estado hiperativo dispara continuamente sinais para que a célula se prolifere e sobreviva, utilizando principalmente a via das MAPKs (RAF/MEK/ERK) e a via PI3K/Akt/mTOR. Por muito tempo, o KRAS foi considerado um alvo terapêutico impossível de ser bloqueado diretamente por medicamentos devido à sua alta afinidade pelo GTP e à falta de encaixes óbvios em sua estrutura. Isso levou a ciência a buscar alternativas baseadas no reposicionamento de fármacos (drug repurposing) e no uso de terapias combinadas.
