@@ -20,6 +20,7 @@ O receptor FLT3 (Fms-like tyrosine kinase 3) funciona como uma dessas rotas aces
 A pergunta central desta investigação é: Quais são as mudanças no perfil de expressão gênica e nas vias funcionais da linhagem H1792 sob o efeito do bloqueio isolado ou combinado de MEK e FLT3, e como essas assinaturas explicam o sinergismo entre as drogas? Para responder a isso, avaliou-se o transcriptoma global das células por sequenciamento de RNA (RNA-Seq) através de três comparações diretas: MEKi vs. Controle, FLT3i vs. Controle, e a comparação direta MEKi vs. FLT3i.
 
 
+
 2. Materiais e Métodos
    
 2.1. Dataset e Desenho Experimental
@@ -41,12 +42,18 @@ O processamento dos dados de bioinformática foi gerenciado utilizando o softwar
 2.3. Análise Estatística no DESeq2
 
 A conversão dos dados de transcritos para nível de gene e a importação para o ambiente R foram feitas com o pacote tximport. A análise de expressão diferencial foi realizada com o pacote DESeq2.
+
 -Modelo Estatístico: O ajuste das contagens seguiu a distribuição Binomial Negativa através da fórmula: design =~condition; onde a variável condition representa os grupos (Ctrl, FLT3i, MEKi).
+
 -Filtragem: Genes com soma total de contagens inferior a 10 foram removidos antes da análise.
 -Contrastes: O teste de Wald foi aplicado para calcular os valores de $p$ em três comparações:
+
 1- c("condition", "MEKi", "ctrl") — Efeitos do bloqueio de MEK.
+
 2- c("condition", "FLT3i", "ctrl") — Efeitos do tratamento com FLT3i.
+
 3- c("condition", "MEKi", "FLT3i") — Comparação direta entre os dois tratamentos.
+
 -Critérios de Significância: Foram considerados Genes Diferencialmente Expressos (DEGs) aqueles com $p$-valor ajustado por Benjamini-Hochberg (padj < 0.05) e mudança na expressão de no mínimo duas vezes (log_2 Fold Change >= 1.0).
 
 2.4. Enriquecimento de Vias por GSEA (WebGestaltR)
@@ -54,6 +61,7 @@ A conversão dos dados de transcritos para nível de gene e a importação para 
 Para avaliar as mudanças biológicas de forma global, sem cortes arbitrários na lista de genes, utilizou-se o pacote WebGestaltR executando o método GSEA (Gene Set Enrichment Analysis). Os genes foram ordenados do mais ativado para o mais reprimido usando a fórmula:
 Score de Rank = -log_10(p-value) * sign(log_2 FoldChange)
 Os nomes dos genes (IDs Ensembl) foram limpos para remover os pontos decimais que indicavam as versões das sequências. A análise buscou caminhos metabólicos e de sinalização no banco de dados KEGG para Homo sapiens, considerando significativas as vias com FDR < 0.05.
+
 
 
 3. Resultados
@@ -80,19 +88,27 @@ Por outro lado, as outras duas réplicas de controle (SRR13020844 e SRR13020845)
 
   O mapa térmico gerado com os 20 genes de maior variação global confirmou a mesma organização observada no gráfico de PCA, dividindo as amostras em três ramificações principais:
   1- Ramificação Esquerda: Isolou a amostra controle outlier SRR13020843, comportamento causado por um bloco de 5 genes com forte expressão relativa (Z-score approx +2.0) que não se repetiu em nenhuma outra amostra.
-  2- amificação Central: Reuniu as três amostras do grupo FLT3i, evidenciando um padrão de ativação exclusivo de 9 genes em resposta ao quizartinib.
+
+   2- amificação Central: Reuniu as três amostras do grupo FLT3i, evidenciando um padrão de ativação exclusivo de 9 genes em resposta ao quizartinib.
+
   3- Ramificação Direita: Agrupou as amostras tratadas com o inibidor de MEK (MEKi) juntamente com as duas réplicas normais do grupo Controle (SRR13020844 e SRR13020845), demonstrando que esses perfis compartilham uma assinatura de expressão muito próxima.
 
 
-  3.5. Enriquecimento de Vias por GSEA (WebGestaltR)
+
+   3.5. Enriquecimento de Vias por GSEA (WebGestaltR)
 
   Ao avaliar os genes ordenados no contraste MEKi vs. Controle, o WebGestaltR identificou vias alteradas no banco do KEGG. O tratamento com o inibidor de MEK resultou em Scores de Enriquecimento Normalizados (NES) negativos, demonstrando uma repressão coordenada dessas vias.
 
 As três principais vias identificadas como estatisticamente significativas estão detalhadas na tabela abaixo:
-ID da Via (KEGG),      Nome da Via,                     NES,    Valor de p,    FDR,          Status Funcional
-hsa04657,        Via de Sinalização de IL-17,          -2.08,      <0.001,     <0.01,         Reprimida (Desligada)
-hsa04512,    Interação Matriz Extracelular-Receptor,   -1.95,      <0.001,     <0.01,        Reprimida (Desligada)
-hsa04114,      Meiose de Oócitos (Ciclo Celular),      -1.74,      <0.002,     <0.03,         Reprimida (Desligada)
+
+ID da Via (KEGG),                   Nome da Via,                             NES,            Valor de p,                  FDR,                Status Funcional
+ 
+hsa04657,                     Via de Sinalização de IL-17,                   -2.08,             <0.001,                 <0.01,              Reprimida (Desligada)
+
+hsa04512,                 Interação Matriz Extracelular-Receptor,            -1.95,              <0.001,                <0.01,               Reprimida (Desligada)
+
+hsa04114,                 Meiose de Oócitos (Ciclo Celular),                 -1.74,              <0.002,                <0.03,         Reprimida (Desligada)
+
 
 
 4. Discussão
@@ -116,6 +132,7 @@ Nesta abordagem prática, avaliou-se o bloqueio específico do eixo FLT3 utiliza
 Essa diferença no perfil de expressão confirma que o sinergismo ocorre por ações complementares. O inibidor de MEK (trametinib) age desligando a cascata central de sinalização do KRAS mutante, o que resulta na repressão do ciclo celular, das vias inflamatórias e do remodelamento de matriz que identificamos no GSEA. Ao mesmo tempo, as células tentam contornar o bloqueio ativando rotas alternativas de escape, como o receptor FLT3.
 
 Ao associar o inibidor de FLT3 (quizartinib) como agente de reposicionamento, bloqueiam-se os mecanismos de suporte que o tumor usa para sobreviver. Dessa forma, a combinação dos dois fármacos inviabiliza as principais rotas de escape da célula tumoral, oferecendo uma base científica sólida que apoia o uso de terapias combinadas para evitar a resistência a monoterapias em tumores pulmonares KRAS mutantes.
+
 
 
 5. Referências
