@@ -24,6 +24,7 @@ O fluxo de trabalho foi totalmente automatizado utilizando o gerenciador de flux
 
 ## 📂 Estrutura do Repositório
 
+```text
 P8-GSE161218-STALINE/
 ├── .gitignore                # Arquivos pesados ignorados (FASTQ, índices, referências)
 ├── README.md                 # Manual de execução e introdução (Este arquivo)
