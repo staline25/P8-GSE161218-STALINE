@@ -1,0 +1,13 @@
+# Ignorar dados brutos e pesados
+data/
+reference/
+.snakemake/
+
+# Ignorar arquivos de log gigantes do Salmon, mas manter os resultados do DESeq2 e WebGestalt
+results/salmon/
+
+# EXCEÇÕES: Manter os recursos leves e relatórios para irem ao GitHub
+!results/multiqc_report.html
+!results/deseq2/*.png
+!results/deseq2/*.csv
+!results/webgestalt_kegg/
