@@ -1,30 +1,30 @@
 # =============================================================================
-# PIPELINE DE RNA-SEQ - DATASET GSE161218
-
-#               RNA-Seq, desde o controle de qualidade até a análise de vias.
+# PIPELINE DE RNA-SEQ AUTOMATIZADO - DATASET GSE161218
+# Mapeamento e Análise de Expressão Diferencial para Câncer de Pulmão (KRAS mutante)
 # =============================================================================
 
 # Define o arquivo de configuração global que contém caminhos e metadados
 configfile: "CONFIG/config.yaml"
 
-# Importa a biblioteca pandas para ler a tabela de metadados das amostras (samples.tsv)
+# Importa a biblioteca pandas para ler a tabela de metadados das amostras
 import pandas as pd
 samples_df = pd.read_csv("CONFIG/samples.tsv", sep="\t")
 SAMPLES = samples_df["sample"].tolist()
 
 
-# Define todos os arquivos finais obrigatórios que o pipeline deve entregar.
-# O Snakemake avalia o pipeline de trás para frente a partir daqui.
-
+# Alvo final do Pipeline. O Snakemake garante a entrega destes arquivos/pastas.
 rule all:
     input:
         "results/multiqc_report.html",
         "results/deseq2/pca_plot.png",
-        "results/deseq2/functional_enrichment.png"
+        "results/deseq2/volcano_plot.png",
+        "results/deseq2/heatmap_plot.png",
+        "results/deseq2/ma_plot.png",
+        "results/deseq2/MEKi_vs_ctrl.csv",
+        directory("results/webgestalt_kegg") # Alvo ajustado para o diretório do WebGestalt
 
-# Controle de Qualidade Inicial
-# Roda o FastQC nos arquivos brutos para avaliar qualidade de bases e adaptadores.
 
+# 1. Controle de Qualidade Inicial (FastQC)
 rule fastqc:
     input:
         r1="data/raw/{sample}_1.fastq.gz",
@@ -37,9 +37,7 @@ rule fastqc:
         "fastqc {input.r1} {input.r2} -o results/fastqc/"
 
 
-# Trimming e Filtragem de Qualidade
-# Usa o fastp para remover adaptadores Illumina e bases de baixa qualidade (Phred < 20).
-
+# 2. Trimming e Filtragem de Qualidade (fastp)
 rule fastp:
     input:
         r1="data/raw/{sample}_1.fastq.gz",
@@ -54,9 +52,7 @@ rule fastp:
         "fastp -i {input.r1} -I {input.r2} -o {output.r1} -O {output.r2} -h {output.html} -j {output.json}"
 
 
-# Consolidação de Relatórios com MultiQC
-# Agrupa os outputs do FastQC e do fastp em um único relatório interativo HTML.
-
+# 3. Consolidação de Relatórios (MultiQC)
 rule multiqc:
     input:
         expand("results/fastqc/{sample}_1_fastqc.html", sample=SAMPLES),
@@ -68,9 +64,7 @@ rule multiqc:
         "multiqc results/fastqc/ results/fastp/ -o results/"
 
 
-# Indexação do Transcriptoma de Referência
-# Prepara a referência de cDNA (gencode) para que o Salmon possa fazer o alinhamento rápido.
-
+# 4. Indexação do Transcriptoma de Referência (Salmon Index)
 rule salmon_index:
     input:
         fasta="reference/transcripts.fa.gz"
@@ -81,10 +75,7 @@ rule salmon_index:
         "salmon index -t {input.fasta} -i {output} --gencode"
 
 
-
-#  Quantificação de Expressão (Quasi-mapping)
-# Mapeia as leituras limpas contra o índice criado e calcula as contagens por transcrito.
-
+# 5. Quantificação de Expressão (Salmon Quant)
 rule salmon_quant:
     input:
         r1="results/fastp/{sample}_1.trimmed.fastq.gz",
@@ -97,10 +88,7 @@ rule salmon_quant:
         "salmon quant -i {input.index} -l A -1 {input.r1} -2 {input.r2} --validateMappings -o results/salmon/{sample}"
 
 
-#Análise Estatística de Expressão Diferencial (R / DESeq2)
-# Consome as quantificações do Salmon, importa via tximport, aplica o modelo estatístico
-# do DESeq2 e plota os gráficos diagnósticos: PCA, Volcano, Heatmap e MA Plot.
-
+# 6. Análise Estatística de Expressão Diferencial (R / DESeq2)
 rule deseq2_analysis:
     input:
         quant_files = expand("results/salmon/{sample}/quant.sf", sample=SAMPLES),
@@ -116,15 +104,12 @@ rule deseq2_analysis:
         "scripts/deseq2_analysis.R"
 
 
-# Análise de Enriquecimento Funcional (R / clusterProfiler)
-# Pega a lista de genes alterados gerada pelo DESeq2 e busca termos de Ontologia
-# Gênica (GO) e vias metabólicas (KEGG) enriquecidas.
-
-rule clusterprofiler_enrichment:
+# 7. Análise de Enriquecimento Funcional (R / WebGestaltR)
+rule webgestalt_enrichment:
     input:
         results_csv = "results/deseq2/MEKi_vs_ctrl.csv"
     output:
-        enrich_plot = "results/deseq2/functional_enrichment.png"
-    message: "Executando análise de enriquecimento funcional com clusterProfiler..."
+        enrich_dir = directory("results/webgestalt_kegg") # Define a saída como o diretório final esperado
+    message: "Executando análise de enriquecimento GSEA (KEGG) com WebGestaltR..."
     script:
         "scripts/enrichment_analysis.R"
