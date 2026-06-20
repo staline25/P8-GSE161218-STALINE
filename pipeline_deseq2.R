@@ -1,8 +1,11 @@
+install.packages("WebGestaltR")
 # 1. CARREGAR AS BIBLIOTECAS
 library(tximport)
 library(DESeq2)
 library(pheatmap)
 library(ggplot2)
+library(WebGestaltR)
+library(dplyr)
 
 # 2. CONFIGURAR METADADOS E CAMINHOS
 samples <- read.table("samples.tsv", header=TRUE, sep="\t")
@@ -70,4 +73,32 @@ pheatmap(matriz_heatmap, cluster_rows=TRUE, cluster_cols=TRUE, scale="row",
          main="Top 20 Genes com Maior Diferença de Expressão")
 dev.off()
 
-cat("Processo concluído! Script atualizado com sucesso.\n")
+
+# ENRIQUECIMENTO COM WEBGESTALT
+
+# 1. Preparar a tabela para o WebGestalt (usando MEKi vs ctrl)
+df_dados <- as.data.frame(res_MEKi_vs_ctrl)
+
+# LIMPEZA: Remover o ponto final e a versão dos IDs Ensembl (ENSG000001.12 vira ENSG000001)
+df_dados$gene_id <- sub("\\..*", "", rownames(df_dados))
+
+# 2. Calcular o Score de Rank
+df_dados$score <- -log10(df_dados$pvalue) * sign(df_dados$log2FoldChange)
+
+# 3. Remover linhas com valores vazios (NA)
+lista_gsea <- na.omit(df_dados[, c("gene_id", "score")])
+
+# Criar a pasta para o WebGestalt se não existir
+if(!dir.exists("results/webgestalt_kegg")) dir.create("results/webgestalt_kegg", recursive = TRUE)
+
+# 4. Rodar o WebGestalt oficial por código (GSEA contra o KEGG)
+WebGestaltR(
+  enrichMethod     = "GSEA",
+  organism         = "hsapiens",
+  enrichDatabase   = "pathway_KEGG",
+  interestGene     = lista_gsea,
+  interestGeneType = "ensembl_gene_id",
+  outputDirectory  = "results/webgestalt_kegg"
+)
+
+
