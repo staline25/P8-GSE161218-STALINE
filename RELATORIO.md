@@ -1,7 +1,9 @@
 # Relatório Científico: Reposicionamento de Fármacos e Sinergismo de Inibidores de Via em Câncer de Pulmão KRAS Mutante (GSE161218)
 
 Disciplina:RIB0305_Laboratorio de Bioinformática 
+
 Aluna: Staline Sahara Dianana_15426416  
+
 Data: 16 de Junho de 2026  
 
 
